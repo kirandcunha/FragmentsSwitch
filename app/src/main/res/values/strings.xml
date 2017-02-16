@@ -2,5 +2,11 @@
     <string name="app_name">FragmentsSwitch</string>
 
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_detail_fragment">Hello detail fragment</string>
+    <string name="hello_player_fragment">Hello player fragment</string>
+
+    <string name="hello_live_fragment">Hello live fragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.test.kiran.fragmentsswitch.R;
+import com.test.kiran.fragmentsswitch.detail.DetailFragment;
 import com.test.kiran.fragmentsswitch.home.dummy.DummyContent;
 import com.test.kiran.fragmentsswitch.live.LiveFragment;
+import com.test.kiran.fragmentsswitch.otherfragment.OtherBaseFragment;
+import com.test.kiran.fragmentsswitch.player.PlayerFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,18 +26,25 @@ import com.test.kiran.fragmentsswitch.live.LiveFragment;
  * Use the {@link BaseHomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BaseHomeFragment extends Fragment implements MenuItemFragment.OnListFragmentInteractionListener{
+public class BaseHomeFragment extends Fragment implements MenuItemFragment.OnListFragmentInteractionListener, LiveFragment.OnFragmentInteractionListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "BaseHomeFragment";
 
+    private final int LIVE_TV = 1;
+    private final int DETAIL = 2;
+    private final int PLAYER = 3;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private LiveFragment liveFragment;
+    private DetailFragment detailFragment;
+    private PlayerFragment playerFragment;
 
     public BaseHomeFragment() {
         // Required empty public constructor
@@ -70,6 +81,7 @@ public class BaseHomeFragment extends Fragment implements MenuItemFragment.OnLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setRetainInstance(true);
         return inflater.inflate(R.layout.fragment_base_home, container, false);
     }
 
@@ -89,14 +101,12 @@ public class BaseHomeFragment extends Fragment implements MenuItemFragment.OnLis
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        MenuItemFragment hello = MenuItemFragment.newInstance(this);
-        fragmentTransaction.add(R.id.base_left_layout, hello, "HELLO");
-
-        LiveFragment liveFragment = new LiveFragment();
-        fragmentTransaction.add(R.id.base_left_layout, hello, TAG);
+        MenuItemFragment menuItemFragment = MenuItemFragment.newInstance(this);
+        fragmentTransaction.replace(R.id.base_left_layout, menuItemFragment, menuItemFragment.getClass().getName());
         fragmentTransaction.commit();
+        //replaceFragment(new LiveFragment());
     }
 
     @Override
@@ -107,6 +117,60 @@ public class BaseHomeFragment extends Fragment implements MenuItemFragment.OnLis
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
+        Log.d(TAG, "onListFragmentInteraction" + item.id);
+        switch (Integer.parseInt(item.id)) {
+            case LIVE_TV:
+                if (null == liveFragment) {
+                    liveFragment = new LiveFragment();
+                }
+                replaceFragment(liveFragment, R.id.base_right_layout);
+                break;
+            case DETAIL:
+                if (null == detailFragment) {
+                    detailFragment = new DetailFragment();
+                }
+                replaceFragment(detailFragment, R.id.base_right_layout);
+                break;
+            case PLAYER:
+                if (null == playerFragment) {
+                    playerFragment = new PlayerFragment();
+                }
+                replaceFragment(playerFragment, R.id.base_right_layout);
+                break;
+            case 4:
+
+                replaceFragment(new OtherBaseFragment(), R.id.home_fragment_container, true);
+                break;
+            case 5:
+                FragmentManager fm = getFragmentManager();
+
+                for (int entry = 0; entry < fm.getBackStackEntryCount(); entry++) {
+                    Log.i(TAG, "Found fragment: " + fm.getBackStackEntryAt(entry).getName());
+                }
+                break;
+        }
+    }
+
+    private void replaceFragment(Fragment fragment, int id, boolean addToBackstack) {
+        String backStateName = fragment.getClass().getName();
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        Fragment fragmentPopped = manager.findFragmentByTag(backStateName);
+        Log.d(TAG, "fragmentPopped:" + fragmentPopped);
+        Log.d(TAG, "Creating " + backStateName);
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.replace(id, fragment, backStateName);
+        if (addToBackstack) {
+            ft.addToBackStack(backStateName);
+        }
+        ft.commit();
+    }
+
+    private void replaceFragment(Fragment fragment, int id) {
+        replaceFragment(fragment, id, false);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 

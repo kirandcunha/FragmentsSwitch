@@ -21,9 +21,9 @@ public class MainActivity extends AppCompatActivity implements BaseHomeFragment.
         setContentView(R.layout.activity_main);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        BaseHomeFragment hello = new BaseHomeFragment();
-        fragmentTransaction.add(R.id.home_fragment_container, hello, TAG);
-        fragmentTransaction.addToBackStack(TAG);
+        BaseHomeFragment baseHomeFragment = new BaseHomeFragment();
+        fragmentTransaction.add(R.id.home_fragment_container, baseHomeFragment, baseHomeFragment.getClass().getName());
+        fragmentTransaction.addToBackStack(baseHomeFragment.getClass().getName());
         fragmentTransaction.commit();
     }
 
@@ -35,5 +35,18 @@ public class MainActivity extends AppCompatActivity implements BaseHomeFragment.
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
         Log.d(TAG, item.toString());
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+        Log.d(TAG, "onBackPressed:" + count);
+        if (count == 0) {
+            super.onBackPressed();
+            //additional code
+        } else {
+
+            getFragmentManager().popBackStack();
+        }
     }
 }

@@ -14,8 +14,6 @@ import com.test.kiran.fragmentsswitch.R;
 import com.test.kiran.fragmentsswitch.home.dummy.DummyContent;
 import com.test.kiran.fragmentsswitch.home.dummy.DummyContent.DummyItem;
 
-import java.util.List;
-
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -26,9 +24,9 @@ public class MenuItemFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static OnListFragmentInteractionListener mListener;
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private static OnListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -79,10 +77,7 @@ public class MenuItemFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (!(mListener instanceof OnListFragmentInteractionListener)) {
-            throw new RuntimeException(mListener.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
+
     }
 
     @Override
